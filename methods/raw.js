@@ -44,7 +44,7 @@ var int = setInterval(() => {
         setTimeout(function () {
             s.destroy();
             return delete s;
-        }, 1000);
+        }, 500);
     })
 });
 setTimeout(() => clearInterval(int), time * 1000);

