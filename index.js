@@ -4,7 +4,6 @@ const url = require('url');
 
 const app = express();
 const port = process.env.PORT || process.env.SERVER_PORT || 4444;
-const scrapeProxies = require('./proxy.js');
 
 async function fetchData() {
   const response = await fetch('https://httpbin.org/get');
