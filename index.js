@@ -13,7 +13,7 @@ async function fetchData() {
 }
 
 app.get('/permen', (req, res) => {
-  const { target, time, methods, port} = req.query;
+  const { target, time, methods, port } = req.query;
   const sikat = new url.URL(target);
   const slurp = sikat.hostname;
 
