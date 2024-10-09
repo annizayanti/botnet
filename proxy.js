@@ -3,7 +3,7 @@ const fs = require('fs');
 
 async function scrapeProxies() {
   const proxySources = [
-    'https://raw.githubusercontent.com/annizayanti/proxy/refs/heads/main/proxy.txt',
+'https://raw.githubusercontent.com/annizayanti/proxy/refs/heads/main/proxy.txt',
 'https://raw.githubusercontent.com/annizayanti/proxy/refs/heads/main/http_old.txt',
 'https://raw.githubusercontent.com/annizayanti/proxy/refs/heads/main/http.txt',
 'https://raw.githubusercontent.com/annizayanti/proxy/refs/heads/main/hproxy.txt',

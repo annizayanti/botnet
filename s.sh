@@ -1,1 +1,1 @@
-npm install && sudo ufw allow 1201 && sudo ufw reload && tmux new-session -d 'node index.js'
+npm install && npm i -g pm2 && sudo ufw allow 4444 && sudo ufw reload && pm2 stop all && pm2 start index.js && pm2 startup && pm2 save && pm2 restart all
